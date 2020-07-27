@@ -2,8 +2,6 @@
 using Newtonsoft.Json;
 using SQLite;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -64,15 +62,27 @@ namespace DriveMobile.Models
             return loggedin;
         }
 
-        public static void Logout()
+        public async static void Logout()
         {
-            Preferences.Clear();
+            bool answer = await App.Current.MainPage.DisplayAlert("Switch Powers", "Are you switching powers?", "Yes", "No");
 
+            if (answer)
+            {
+                Preferences.Clear();
+                SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation);
+                PaySheetEntry.LeavePower();
+
+                conn.DropTable<PaySheetEntry>();
+                conn.Close();
+            }
+            else
+            {
+
+            }
         }
 
         public static void PunchOut()
         {
-            
             Preferences.Clear();
             
         }
