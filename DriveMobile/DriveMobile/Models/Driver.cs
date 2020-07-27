@@ -1,5 +1,6 @@
 ﻿using DriveMobile.Helpers;
 using Newtonsoft.Json;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,27 +41,40 @@ namespace DriveMobile.Models
         public async static Task<bool> Login(Credentials credentials)
         {
             bool loggedin = false;
-            Driver driver = new Driver();
-
+      
             string url = string.Format(Constants.DRIVE_BASE_URL, Constants.AUTH);
             var credsInJson = JsonConvert.SerializeObject(credentials);
             var stringContent = new StringContent(credsInJson, Encoding.UTF8, "application/json");
-            
 
-            using (HttpClient client = new HttpClient())
-            {
-                var response = await client.PostAsync(url, stringContent);
-                var json = await response.Content.ReadAsStringAsync();
-                driver = JsonConvert.DeserializeObject<Driver>(json);
-            }
 
+            var response = await App.client.PostAsync(url, stringContent);
+            var json = await response.Content.ReadAsStringAsync();
+            Driver driver = JsonConvert.DeserializeObject<Driver>(json);
 
 
             Preferences.Set("authToken", driver.AccessToken);
             Preferences.Set("fullName", driver.FullName);
             Preferences.Set("expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
 
+            // setting default authToken in the global httpClient see app.xaml.cs
+            App.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
+
+            PaySheet.GetCurrentOrNewPaysheet();
+
             return loggedin;
+        }
+
+        public static void Logout()
+        {
+            Preferences.Clear();
+
+        }
+
+        public static void PunchOut()
+        {
+            
+            Preferences.Clear();
+            
         }
     }
 }
