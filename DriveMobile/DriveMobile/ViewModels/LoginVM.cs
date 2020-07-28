@@ -85,7 +85,16 @@ namespace DriveMobile.ViewModels
 
             if (loginSuccess)
             {
-                
+                //PaySheetEntry.PunchIn();
+                await App.Current.MainPage.Navigation.PushAsync(new PowerPage());
+                UserName = "";
+                Password = "";
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Loggin Error", "Something went wrong during the log in process, Please Try again.", "Ok");
+                UserName = "";
+                Password = "";
             }
 
         }

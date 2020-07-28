@@ -12,10 +12,10 @@
                     AlignItems="Center"
                     JustifyContent="Center">
             <Entry x:Name="UserNameEntry"
-                   Text="{Binding UserName, Mode=OneWayToSource}"
+                   Text="{Binding UserName, Mode=TwoWay}"
                    Placeholder="Username"/>
             <Entry x:Name="PasswordEntry"
-                   Text="{Binding Password, Mode=OneWayToSource}"
+                   Text="{Binding Password, Mode=TwoWay}"
                    Placeholder="Password"
                    IsPassword="True"/>
             <Button x:Name="LoginButton"

@@ -2,11 +2,13 @@
 using Newtonsoft.Json;
 using SQLite;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
+using Xamarin.Forms.Internals;
 
 namespace DriveMobile.Models
 {
@@ -38,28 +40,33 @@ namespace DriveMobile.Models
 
         public async static Task<bool> Login(Credentials credentials)
         {
-            bool loggedin = false;
-      
+            Driver driver = new Driver();
+            string json;
+            bool loggedIn = false;
+
             string url = string.Format(Constants.DRIVE_BASE_URL, Constants.AUTH);
             var credsInJson = JsonConvert.SerializeObject(credentials);
             var stringContent = new StringContent(credsInJson, Encoding.UTF8, "application/json");
 
 
             var response = await App.client.PostAsync(url, stringContent);
-            var json = await response.Content.ReadAsStringAsync();
-            Driver driver = JsonConvert.DeserializeObject<Driver>(json);
 
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                json = await response.Content.ReadAsStringAsync();
+                driver = JsonConvert.DeserializeObject<Driver>(json);
+                loggedIn = true;
+                Preferences.Set("authToken", driver.AccessToken);
+                Preferences.Set("fullName", driver.FullName);
+                Preferences.Set("expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
 
-            Preferences.Set("authToken", driver.AccessToken);
-            Preferences.Set("fullName", driver.FullName);
-            Preferences.Set("expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
+                // setting default authToken in the global httpClient see app.xaml.cs
+                App.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
 
-            // setting default authToken in the global httpClient see app.xaml.cs
-            App.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
+                //PaySheet.GetCurrentOrNewPaysheet();
+            }
 
-            PaySheet.GetCurrentOrNewPaysheet();
-
-            return loggedin;
+            return loggedIn;
         }
 
         public async static void Logout()
@@ -84,7 +91,7 @@ namespace DriveMobile.Models
         public static void PunchOut()
         {
             Preferences.Clear();
-            
+
         }
     }
 }

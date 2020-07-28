@@ -4,8 +4,10 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
+using Xamarin.Essentials;
 
 namespace DriveMobile.Models
 {
@@ -16,25 +18,30 @@ namespace DriveMobile.Models
 
         public async static void GetCurrentOrNewPaysheet()
         {
+            PaySheet paysheet = new PaySheet();
+            string json;
+
             string url = string.Format(Constants.DRIVE_BASE_URL, Constants.PAYSHEET);
             var response = await App.client.GetAsync(url);
 
-            var json = await response.Content.ReadAsStringAsync();
-
-            PaySheet paysheet = JsonConvert.DeserializeObject<PaySheet>(json);
-
-            if (paysheet.PaySheetEntries?.Any() != true)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                json = await response.Content.ReadAsStringAsync();
+                paysheet = JsonConvert.DeserializeObject<PaySheet>(json);
+                Preferences.Set("PaysheetId", paysheet.Id);
+
+                if (paysheet.PaySheetEntries?.Any() != true)
                 {
-                    conn.CreateTable<PaySheetEntry>();
-                    conn.InsertAll(paysheet.PaySheetEntries);
+                    // Inserting directly into db, this should be done on the PaySheetEntry Model
+                    // but this already has the created paysheet entries. 
+                    using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                    {
+                        conn.CreateTable<PaySheetEntry>();
+                        conn.InsertAll(paysheet.PaySheetEntries);
+                    }
                 }
             }
-            else
-            {
-                PaySheetEntry.PunchIn();
-            }
+
         }
     }
 }

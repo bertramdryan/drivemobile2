@@ -16,10 +16,9 @@ namespace DriveMobile.Helpers
         public const string SAVE_MULTIPLE_PAYSHEET_ENTRIES = "/api/mobile/saveMultiplePaySheetEntry";
 
         // KeepTrucking API
-        public const string KEEPTRUCKIN_URL = "https://api.keeptruckin.com";
+        public const string KEEPTRUCKIN_LOOKUP_URL = "https://api.keeptruckin.com/v1/vehicles/lookup?number={0}";
+        public const string KEEPTRUCKIN_LOCATION = "https://api.keeptruckin.com/v1/vehicle_locations?vehicle_ids={0}";
         public const string KT_API_KEY = "3b08a885-6da0-4872-bd1a-a09aefbc87ab";
-        public const string LOOKUP = "/v1/vehicles/lookup";
-        public const string LOCATION = "/v1/vehicle_locations";
 
         // Driver Survey API
         public const string SURVEY_BASE_URL = "https://survey.hollandspecial.com";

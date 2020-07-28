@@ -14,7 +14,7 @@ namespace DriveMobile
         public static string DatabaseLocation = string.Empty;
         public static Driver driver = new Driver();
         public static bool loggedIn = false;
-        public static HttpClient client = new HttpClient();
+        public static HttpClient driveClient = new HttpClient();
         public static PaySheetEntryTypeEnums status;
 
         public App()
@@ -40,6 +40,7 @@ namespace DriveMobile
 
         private void TryAutoLogin()
         {
+            Preferences.Clear();
             if (Preferences.ContainsKey("expiration"))
             {
                 DateTime expires = Preferences.Get("expiration", DateTime.Now);
@@ -52,7 +53,7 @@ namespace DriveMobile
 
                     // Setting authToken to global http client. 
                     if (!string.IsNullOrEmpty(authToken))
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                        driveClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
                 }
                 else
                 {

@@ -33,6 +33,7 @@ namespace DriveMobile.Models
 
     public class PaySheetEntry
     {
+        #region PaySheetEntry Properties
         [IgnoreDataMember]
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -76,7 +77,9 @@ namespace DriveMobile.Models
         public bool IsHourly { get; set; }
         public bool ForAllocatedOrder { get; set; }
         public bool SentToServer { get; set; }
+        #endregion PaySheetEntry Properties
 
+        #region Paysheet Entries
         public static void PunchIn()
         {
             PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.PunchIn);
@@ -205,6 +208,9 @@ namespace DriveMobile.Models
             SendToServer();
         }
 
+        #endregion Paysheet Entries
+
+        #region Sqlite Queries
         private static void BatchInsertIntoSQLite(List<PaySheetEntry> paysheetEntries)
         {
             using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
@@ -248,19 +254,44 @@ namespace DriveMobile.Models
             }
         }
 
+        #endregion Sqlite Queries
 
+        #region Create PaysheetEntries
         private static PaySheetEntry CreatePaysheetEntry(PaySheetEntryTypeEnums entryType)
         {
             DateTime currentTime = DateTime.UtcNow;
+            var paySheetEntry = new PaySheetEntry();
+            int paysheetId = 0;
 
-            PaySheetEntry paySheetEntry = new PaySheetEntry()
+            if (Preferences.ContainsKey("PaysheetId"))
+                 paysheetId = Preferences.Get("PaysheetId", 0);
+            
+
+            try
             {
+                if (paysheetId == 0)
+                    throw new Exception("Could not create paysheetEntry, please restart the app or contact dispatch");
 
-            };
+                paySheetEntry = new PaySheetEntry()
+                {
+                    PaySheetId = paysheetId,
+                    EntryType = entryType,
+                    EntryDate = currentTime,
+                    EntryCreated = currentTime,
+                    DriverId = App.driver.DriverId
+                };
+                
+                return paySheetEntry;
 
+            }
+            catch(Exception ex)
+            {
+                App.Current.MainPage.DisplayAlert("PaysheetEntry Error", ex.Message, "Ok");
+            }
 
             return paySheetEntry;
         }
+
 
         private static PaySheetEntry CreatePaysheetEntry(PaySheetEntryTypeEnums entryType, Stop stop)
         {
@@ -276,6 +307,9 @@ namespace DriveMobile.Models
             return paySheetEntry;
         }
 
+        #endregion Create PaysheetEntries
+
+        #region Send to DriveAPI
         private static async void SendToServer()
         {
             var paysheetEntries = GetPaySheetEntriesToPost();
@@ -286,20 +320,21 @@ namespace DriveMobile.Models
                 var paysheetsInJson = JsonConvert.SerializeObject(paysheetEntries);
                 var stringContent = new StringContent(paysheetsInJson, Encoding.UTF8, "application/json");
 
-                var result = await App.client.PostAsync(url, stringContent);
+                var result = await App.driveClient.PostAsync(url, stringContent);
 
                 if (result.StatusCode == HttpStatusCode.OK)
                 {
                     foreach (var paysheetEntry in paysheetEntries)
-                        paysheetEntry.SentToServer = true;
-
-                    using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
                     {
-                        conn.UpdateAll(paysheetEntries);
+                        paysheetEntry.SentToServer = true;
+                        UpdatePaySheet(paysheetEntry);
                     }
+
+                   
                 }
             }
         }
+        #endregion Send to DriveAPI
     }
 
 }
