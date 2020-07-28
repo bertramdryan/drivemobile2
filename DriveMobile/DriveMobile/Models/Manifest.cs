@@ -1,6 +1,8 @@
-﻿using System;
+﻿using DriveMobile.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DriveMobile.Models
 {
@@ -19,21 +21,23 @@ namespace DriveMobile.Models
         public int BarCount { get; set; }
         public int DeckingCount { get; set; }
         public bool NeedsBlocking { get; set; }
-        public object CarrierCustomerId { get; set; }
-        public object CarrierLocationId { get; set; }
-        public object CarrierContactId { get; set; }
         public object TrailerNumber { get; set; }
-        public object OnRoadOn { get; set; }
-        public object OnRoadBy { get; set; }
-        public object OnRoadByName { get; set; }
-        public object CompletedOn { get; set; }
-        public object CompletedBy { get; set; }
-        public object CompletedByName { get; set; }
-        public object ConfirmedByName { get; set; }
         public IList<Stop> Stops { get; set; }
-        public IList<PaySheetEntry> PaySheetEntries { get; set; }
-        public PaySheetEntry DunnagePaySheetEntry { get; set; }
+
         public int Id { get; set; }
+
+
+        public static async Task<List<Manifest>> GetManifests() 
+        {
+            List<Manifest> manifestList = new List<Manifest>();
+
+            string url = string.Format(Constants.DRIVE_BASE_URL, Constants.MANIFEST);
+
+            
+
+            return manifestList;
+        }
+
     }
 
  
