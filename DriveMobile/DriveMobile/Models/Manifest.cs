@@ -27,20 +27,16 @@ namespace DriveMobile.Models
         public int Id { get; set; }
 
 
-        public static async Task<List<Manifest>> GetManifests() 
-        {
-            List<Manifest> manifestList = new List<Manifest>();
+        //public static async Task<List<Manifest>> GetManifests()
+        //{
+        //    List<Manifest> manifestList = new List<Manifest>();
 
-            string url = string.Format(Constants.DRIVE_BASE_URL, Constants.MANIFEST);
+        //    string url = string.Format(Constants.DRIVE_BASE_URL, Constants.MANIFEST);
 
-            
 
-            return manifestList;
-        }
+
+        //    return manifestList;
+        //}
 
     }
-
- 
-
-
 }

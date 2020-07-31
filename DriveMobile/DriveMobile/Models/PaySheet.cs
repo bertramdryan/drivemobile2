@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace DriveMobile.Models
@@ -16,13 +17,13 @@ namespace DriveMobile.Models
         public IList<PaySheetEntry> PaySheetEntries { get; set; }
         public int Id { get; set; }
 
-        public async static void GetCurrentOrNewPaysheet()
+        public async static Task<bool> GetCurrentOrNewPaysheet()
         {
             PaySheet paysheet = new PaySheet();
             string json;
 
             string url = string.Format(Constants.DRIVE_BASE_URL, Constants.PAYSHEET);
-            var response = await App.client.GetAsync(url);
+            var response = await App.driveClient.GetAsync(url);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -40,6 +41,12 @@ namespace DriveMobile.Models
                         conn.InsertAll(paysheet.PaySheetEntries);
                     }
                 }
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
 
         }

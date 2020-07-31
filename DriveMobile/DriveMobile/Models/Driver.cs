@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using SQLite;
 using System;
+using System.Data;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -49,7 +51,7 @@ namespace DriveMobile.Models
             var stringContent = new StringContent(credsInJson, Encoding.UTF8, "application/json");
 
 
-            var response = await App.client.PostAsync(url, stringContent);
+            var response = await App.driveClient.PostAsync(url, stringContent);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -59,11 +61,26 @@ namespace DriveMobile.Models
                 Preferences.Set("authToken", driver.AccessToken);
                 Preferences.Set("fullName", driver.FullName);
                 Preferences.Set("expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
+                App.driver = driver;
+                App.loggedIn = true;
 
                 // setting default authToken in the global httpClient see app.xaml.cs
-                App.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
+                App.driveClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
 
-                //PaySheet.GetCurrentOrNewPaysheet();
+                bool gotPaySheet = await PaySheet.GetCurrentOrNewPaysheet();
+
+                if (gotPaySheet)
+                    using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                    {
+                        conn.CreateTable<PaySheetEntry>();
+                        var punchIn = conn.Table<PaySheetEntry>().ToList().Where(p => p.EntryType == PaySheetEntryTypeEnums.PunchIn).ToList();
+                        if (punchIn.Count == 0)
+                        {
+                            await PaySheetEntry.PunchIn();
+                        }
+                    }
+                else
+                    loggedIn = false;
             }
 
             return loggedIn;
@@ -75,23 +92,35 @@ namespace DriveMobile.Models
 
             if (answer)
             {
-                Preferences.Clear();
-                SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation);
-                PaySheetEntry.LeavePower();
+                await PaySheetEntry.LeavePower();
+                string url = string.Format(Constants.DRIVE_BASE_URL, Constants.LOGOUT);
+                var emptyPost = JsonConvert.SerializeObject(new object());
+                var stringContent = new StringContent(emptyPost, Encoding.UTF8, "application/json");
 
-                conn.DropTable<PaySheetEntry>();
-                conn.Close();
-            }
-            else
-            {
+                App.driver = null;
+                App.loggedIn = false;
+                
+                await App.driveClient.PostAsync(url, stringContent);
+
+                await App.Current.MainPage.Navigation.PushAsync(new LoginPage());
+
 
             }
+
         }
 
-        public static void PunchOut()
+        public async static void PunchOut()
         {
+            await PaySheetEntry.LeavePower();
+            string url = string.Format(Constants.DRIVE_BASE_URL, Constants.LOGOUT);
+            var emptyPost = JsonConvert.SerializeObject(new object());
+            var stringContent = new StringContent(emptyPost, Encoding.UTF8, "application/json");
+            await App.driveClient.PostAsync(url, stringContent);
             Preferences.Clear();
-
+            SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation);
+            conn.DropTable<PaySheetEntry>();
+            conn.Close();
+            await App.Current.MainPage.Navigation.PushAsync(new LoginPage());
         }
     }
 }

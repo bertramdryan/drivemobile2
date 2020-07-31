@@ -15,6 +15,7 @@ namespace DriveMobile
         public static Driver driver = new Driver();
         public static bool loggedIn = false;
         public static HttpClient driveClient = new HttpClient();
+        public static int numOfStopsRemaining = 0;
         public static PaySheetEntryTypeEnums status;
 
         public App()
@@ -40,7 +41,7 @@ namespace DriveMobile
 
         private void TryAutoLogin()
         {
-            Preferences.Clear();
+            //Preferences.Clear();
             if (Preferences.ContainsKey("expiration"))
             {
                 DateTime expires = Preferences.Get("expiration", DateTime.Now);

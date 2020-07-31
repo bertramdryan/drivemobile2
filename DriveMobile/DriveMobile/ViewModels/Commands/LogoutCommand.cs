@@ -1,18 +1,17 @@
-﻿using DriveMobile.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
 namespace DriveMobile.ViewModels.Commands
 {
-    class SelectPowerCommand : ICommand
+    class LogoutCommand : ICommand
     {
-        public PowerVM ViewModel { get; set; }
+        public LogoutVM ViewModel { get; set; }
 
-        public SelectPowerCommand(PowerVM powerVM)
+        public LogoutCommand(LogoutVM logoutVm)
         {
-            ViewModel = powerVM;
+            ViewModel = logoutVm;
         }
 
 #pragma warning disable 0067
@@ -21,17 +20,15 @@ namespace DriveMobile.ViewModels.Commands
 
         public bool CanExecute(object parameter)
         {
-            var power = (Power)parameter;
+            if (App.numOfStopsRemaining != 0)
+                      return true;
 
-            if (power == null)
-                return false;
-            else
-                return true;
+            return false;
         }
 
         public void Execute(object parameter)
         {
-            ViewModel.SelectPower();
+            ViewModel.Logout();
         }
     }
 }

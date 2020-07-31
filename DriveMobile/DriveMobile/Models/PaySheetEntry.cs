@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace DriveMobile.Models
@@ -39,20 +41,20 @@ namespace DriveMobile.Models
         public int Id { get; set; }
         public long PaySheetId { get; set; }
         public PaySheetEntryTypeEnums EntryType { get; set; }
-        public long? TrailerId { get; set; }
+        public int? TrailerId { get; set; }
         public string TrailerName { get; set; }
-        public long? StopTypeId { get; set; }
+        public int? StopTypeId { get; set; }
         public string StopTypeName { get; set; }
-        public long? PowerId { get; set; }
+        public int? PowerId { get; set; }
         public string PowerName { get; set; }
         public DateTime? EntryDate { get; set; }
         public DateTime EntryCreated { get; set; }
-        public long? DispatchLoadId { get; set; }
-        public long? DispatchLoadStopId { get; set; }
-        public long? OrderStopId { get; set; }
+        public int? DispatchLoadId { get; set; }
+        public int? DispatchLoadStopId { get; set; }
+        public int? OrderStopId { get; set; }
         public OrderStop OrderStop { get; set; }
         public string OtherStopType { get; set; }
-        public long? OtherStopTypeId { get; set; }
+        public int? OtherStopTypeId { get; set; }
         public bool IsEquipmentMove { get; set; }
         public string OtherStopName { get; set; }
         public string OtherStopAddress1 { get; set; }
@@ -60,43 +62,57 @@ namespace DriveMobile.Models
         public string OtherStopCity { get; set; }
         public string OtherStopState { get; set; }
         public string OtherStopZip { get; set; }
-        public long? OrderId { get; set; }
-        public long? DriverId { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
+        public int? OrderId { get; set; }
+        public int? DriverId { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public string EstimatedZipCode { get; set; }
-        public decimal? PiecesActual { get; set; }
-        public decimal? CountActual { get; set; }
-        public decimal? Damaged { get; set; }
-        public decimal? Pieces { get; set; }
-        public decimal? Count { get; set; }
+        public double? PiecesActual { get; set; }
+        public double? CountActual { get; set; }
+        public double? Damaged { get; set; }
+        public double? Pieces { get; set; }
+        public double? Count { get; set; }
         public string AuditedByName { get; set; }
         public string ConfirmedByName { get; set; }
         public string Notes { get; set; }
-        public decimal? Mileage { get; set; }
+        public double? Mileage { get; set; }
         public bool IsHourly { get; set; }
         public bool ForAllocatedOrder { get; set; }
         public bool SentToServer { get; set; }
         #endregion PaySheetEntry Properties
 
         #region Paysheet Entries
-        public static void PunchIn()
+        public async static Task<bool> PunchIn()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.PunchIn);
-            InsertIntoSQLite(punchInEntry);
-            App.status = PaySheetEntryTypeEnums.PunchIn;
-            SendToServer();
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.PunchIn);
+            if (punchInEntry != null)
+            {
+                InsertIntoSQLite(punchInEntry);
+                App.status = PaySheetEntryTypeEnums.PunchIn;
+            }
+
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void CompletleDunnage()
+        public async static Task<bool> CompletleDunnage()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.CompleteDunnage);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.CompleteDunnage);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.CompleteDunnage;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void Arrive(List<Stop> stops)
+        public async static Task<bool> Arrive(List<Stop> stops)
         {
             List<PaySheetEntry> paySheetEntries = new List<PaySheetEntry>();
 
@@ -105,11 +121,16 @@ namespace DriveMobile.Models
 
             BatchInsertIntoSQLite(paySheetEntries);
             App.status = PaySheetEntryTypeEnums.Arrive;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
 
         }
 
-        public static void Depart(List<Stop> stops)
+        public async static Task<bool> Depart(List<Stop> stops)
         {
             List<PaySheetEntry> paySheetEntries = new List<PaySheetEntry>();
 
@@ -118,94 +139,155 @@ namespace DriveMobile.Models
 
             BatchInsertIntoSQLite(paySheetEntries);
             App.status = PaySheetEntryTypeEnums.Depart;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void BreakStart()
+        public async static Task<bool> BreakStart()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakStart);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakStart);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.BreakStart;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void BreakEnd()
+        public async static Task<bool> BreakEnd()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakEnd);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakEnd);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.BreakEnd;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void PunchOut()
+        public async static Task<bool> PunchOut()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.PunchOut);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.PunchOut);
             InsertIntoSQLite(punchInEntry);
-            SendToServer();
+            App.status = PaySheetEntryTypeEnums.PunchOut;
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void LeavePower()
+        public async static Task<bool> LeavePower()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.LeavePower);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.LeavePower);
             InsertIntoSQLite(punchInEntry);
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void FuelStart()
+        public async static Task<bool> FuelStart()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.FuelStart);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.FuelStart);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.FuelStart;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void FuelEnd()
+        public async static Task<bool> FuelEnd()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.FuelEnd);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.FuelEnd);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.FuelEnd;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void BreakdownStart()
+        public async static Task<bool> BreakdownStart()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakdownStart);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakdownStart);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.BreakdownStart;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void BreakdownEnd()
+        public async static Task<bool> BreakdownEnd()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakdownEnd);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.BreakdownEnd);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.BreakdownEnd;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void EnterPower()
+        public async static Task<bool> EnterPower()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.EnterPower);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.EnterPower);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.EnterPower;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
 
-        public static void LayoverStart()
+        public async static Task<bool> LayoverStart()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.LayoverStart);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.LayoverStart);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.LayoverStart;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
-        public static void LayoverStop()
+        public async static Task<bool> LayoverStop()
         {
-            PaySheetEntry punchInEntry = CreatePaysheetEntry(PaySheetEntryTypeEnums.LayoverStop);
+            PaySheetEntry punchInEntry = await CreatePaysheetEntry(PaySheetEntryTypeEnums.LayoverStop);
             InsertIntoSQLite(punchInEntry);
             App.status = PaySheetEntryTypeEnums.LayoverStop;
-            SendToServer();
+            var result = await SendToServer();
+
+            if (result)
+                return true;
+            else
+                return false;
         }
 
         #endregion Paysheet Entries
@@ -257,36 +339,57 @@ namespace DriveMobile.Models
         #endregion Sqlite Queries
 
         #region Create PaysheetEntries
-        private static PaySheetEntry CreatePaysheetEntry(PaySheetEntryTypeEnums entryType)
+        private async static Task<PaySheetEntry> CreatePaysheetEntry(PaySheetEntryTypeEnums entryType)
         {
             DateTime currentTime = DateTime.UtcNow;
-            var paySheetEntry = new PaySheetEntry();
+            PaySheetEntry paySheetEntry = new PaySheetEntry();
+            int driverId = App.driver.DriverId;
+
             int paysheetId = 0;
+            int? powerId = null;
+
+            CurrentLocation currentLocation = new CurrentLocation();
+
+            if (entryType != PaySheetEntryTypeEnums.PunchIn)
+            {
+                currentLocation = await CurrentLocation.GetLocation();
+            }
 
             if (Preferences.ContainsKey("PaysheetId"))
-                 paysheetId = Preferences.Get("PaysheetId", 0);
-            
+                paysheetId = Preferences.Get("PaysheetId", 0);
+
+            if (Preferences.ContainsKey("PowerId"))
+                powerId = Preferences.Get("PowerId", 0);
 
             try
             {
-                if (paysheetId == 0)
+                if (paysheetId == 0 && entryType != PaySheetEntryTypeEnums.PunchIn)
                     throw new Exception("Could not create paysheetEntry, please restart the app or contact dispatch");
 
-                paySheetEntry = new PaySheetEntry()
+                else
                 {
-                    PaySheetId = paysheetId,
-                    EntryType = entryType,
-                    EntryDate = currentTime,
-                    EntryCreated = currentTime,
-                    DriverId = App.driver.DriverId
-                };
-                
-                return paySheetEntry;
+                    paySheetEntry = new PaySheetEntry()
+                    {
+                        PaySheetId = paysheetId,
+                        EntryType = entryType,
+                        EntryDate = currentTime,
+                        EntryCreated = currentTime,
+                        DriverId = driverId,
+                        Mileage = currentLocation?.Odometer,
+                        Latitude = currentLocation?.Lat,
+                        Longitude = currentLocation?.Lon,
+                        PowerId = powerId != 0 ? powerId : null,
+
+                    };
+
+                    return paySheetEntry;
+                }
+
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                App.Current.MainPage.DisplayAlert("PaysheetEntry Error", ex.Message, "Ok");
+                await App.Current.MainPage.DisplayAlert("PaysheetEntry Error", ex.Message, "Ok");
             }
 
             return paySheetEntry;
@@ -310,11 +413,11 @@ namespace DriveMobile.Models
         #endregion Create PaysheetEntries
 
         #region Send to DriveAPI
-        private static async void SendToServer()
+        private static async Task<bool> SendToServer()
         {
             var paysheetEntries = GetPaySheetEntriesToPost();
 
-            if (paysheetEntries != null)
+            if (paysheetEntries.Count > 0)
             {
                 string url = string.Format(Constants.DRIVE_BASE_URL, Constants.SAVE_MULTIPLE_PAYSHEET_ENTRIES);
                 var paysheetsInJson = JsonConvert.SerializeObject(paysheetEntries);
@@ -330,9 +433,11 @@ namespace DriveMobile.Models
                         UpdatePaySheet(paysheetEntry);
                     }
 
-                   
+                    return true;
                 }
             }
+
+            return false;
         }
         #endregion Send to DriveAPI
     }

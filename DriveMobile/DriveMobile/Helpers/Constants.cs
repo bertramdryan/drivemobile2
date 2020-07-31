@@ -14,6 +14,7 @@ namespace DriveMobile.Helpers
         public const string MANIFEST = "/api/mobile/manifest2/";
         public const string PAYSHEET = "/api/mobile/currentPaySheet";
         public const string SAVE_MULTIPLE_PAYSHEET_ENTRIES = "/api/mobile/saveMultiplePaySheetEntry";
+        public const string LOGOUT = "/api/logout";
 
         // KeepTrucking API
         public const string KEEPTRUCKIN_LOOKUP_URL = "https://api.keeptruckin.com/v1/vehicles/lookup?number={0}";

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DriveMobile.Models;
+using DriveMobile.ViewModels;
+using SQLite;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace DriveMobile
@@ -13,9 +12,19 @@ namespace DriveMobile
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
+        LogoutVM logoutVM;
         public MainPage()
         {
             InitializeComponent();
+
+            logoutVM = new LogoutVM();
+
+            BindingContext = logoutVM;
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
         }
     }
 }
