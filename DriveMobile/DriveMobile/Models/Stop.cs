@@ -8,7 +8,7 @@ namespace DriveMobile.Models
     {
 
         public int? OrderStopId { get; set; }
-        public object EquipmentMoveId { get; set; }
+        public int? EquipmentMoveId { get; set; }
         public int? CustomerId { get; set; }
         public int? OrderId { get; set; }
         public int DispatchLoadId { get; set; }
@@ -24,7 +24,7 @@ namespace DriveMobile.Models
         public DateTime ActualDepartureTime { get; set; }
         public string LocationName { get; set; }
         public string StreetAddress1 { get; set; }
-        public object StreetAddress2 { get; set; }
+        public string StreetAddress2 { get; set; }
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
@@ -36,8 +36,8 @@ namespace DriveMobile.Models
         public bool StopTypeIncrementsCount { get; set; }
         public bool HasTrailerOnArrival { get; set; }
         public bool HasTrailerOnDeparture { get; set; }
-        public object TrailerId { get; set; }
-        public object TrailerName { get; set; }
+        public int? TrailerId { get; set; }
+        public string TrailerName { get; set; }
         public string Instructions { get; set; }
         public string DockName { get; set; }
         public string DockNotes { get; set; }

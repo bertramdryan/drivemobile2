@@ -13,8 +13,8 @@ namespace DriveMobile.Models
         public IList<Stop> Stops { get; set; }
         public DockInfo DockInto { get; set; }
         public TrailerInfo TrailerInfo { get; set; }
-        public DateTime ActualBegin { get; set; }
-        public DateTime ActualComplete { get; set; }
+        public DateTime EstimatedStartTime { get; set; }
+        public DateTime LatestStartTime { get; set; }
         public bool Completed { get; set; }
 
     }

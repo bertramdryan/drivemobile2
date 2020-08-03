@@ -62,7 +62,7 @@ namespace DriveMobile.Models
                 Preferences.Set("fullName", driver.FullName);
                 Preferences.Set("expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
                 App.driver = driver;
-                App.loggedIn = true;
+                               
 
                 // setting default authToken in the global httpClient see app.xaml.cs
                 App.driveClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
