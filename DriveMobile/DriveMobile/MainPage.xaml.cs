@@ -12,14 +12,17 @@ namespace DriveMobile
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        LogoutVM logoutVM;
+        LogoutVM LogoutVM;
+        MainVM MainVM;
+
         public MainPage()
         {
             InitializeComponent();
 
-            logoutVM = new LogoutVM();
+            MainVM = new  MainVM();
+            LogoutVM = new LogoutVM();
 
-            BindingContext = logoutVM;
+            BindingContext = MainVM;
         }
 
         protected override void OnDisappearing()

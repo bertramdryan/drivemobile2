@@ -13,7 +13,7 @@ namespace DriveMobile.Models
         public string State { get; set; }
         public string Zip { get; set; }
         public string PhoneNumber { get; set; }
-        public Decimal Lat { get; set; }
-        public Decimal lng { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
     }
 }

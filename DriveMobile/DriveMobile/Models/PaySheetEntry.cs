@@ -343,7 +343,11 @@ namespace DriveMobile.Models
         {
             DateTime currentTime = DateTime.UtcNow;
             PaySheetEntry paySheetEntry = new PaySheetEntry();
-            int driverId = App.driver.DriverId;
+
+            int driverId = 0;
+            
+            if(Preferences.ContainsKey("DriverId"))
+                driverId = Preferences.Get("DriverId", 0);
 
             int paysheetId = 0;
             int? powerId = null;
@@ -361,10 +365,15 @@ namespace DriveMobile.Models
             if (Preferences.ContainsKey("PowerId"))
                 powerId = Preferences.Get("PowerId", 0);
 
+            if (powerId == 0 || paysheetId == 0 || driverId == 0)
+            {
+                await App.Current.MainPage.DisplayAlert(Constants.PAYSHEET_WARNING_TITLE, Constants.PAYSHEET_WARNING_MESSAGE, "Ok");
+            }
+
             try
             {
                 if (paysheetId == 0 && entryType != PaySheetEntryTypeEnums.PunchIn)
-                    throw new Exception("Could not create paysheetEntry, please restart the app or contact dispatch");
+                    throw new Exception(Constants.PAYSHEET_EXCEPTION);
 
                 else
                 {

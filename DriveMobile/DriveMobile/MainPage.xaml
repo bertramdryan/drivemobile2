@@ -11,9 +11,6 @@
         <Label Text="Welcome to Xamarin.Forms!" 
            HorizontalOptions="Center"
            VerticalOptions="CenterAndExpand" />
-        <Button BorderColor="DodgerBlue"
-                Text="Punchout"
-                Command="{Binding PunchoutCmd}"/>
     </StackLayout>
 
 </ContentPage>

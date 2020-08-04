@@ -58,11 +58,13 @@ namespace DriveMobile.Models
                 json = await response.Content.ReadAsStringAsync();
                 driver = JsonConvert.DeserializeObject<Driver>(json);
                 loggedIn = true;
-                Preferences.Set("authToken", driver.AccessToken);
-                Preferences.Set("fullName", driver.FullName);
-                Preferences.Set("expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
-                App.driver = driver;
-                App.loggedIn = true;
+                Preferences.Set("AuthToken", driver.AccessToken);
+                Preferences.Set("FullName", driver.FullName);
+                Preferences.Set("UserId", driver.UserId);
+                Preferences.Set("DriverId", driver.DriverId);
+                Preferences.Set("Expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
+                //App.driver = driver;
+                               
 
                 // setting default authToken in the global httpClient see app.xaml.cs
                 App.driveClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", driver.AccessToken);
@@ -88,7 +90,7 @@ namespace DriveMobile.Models
 
         public async static void Logout()
         {
-            bool answer = await App.Current.MainPage.DisplayAlert("Switch Powers", "Are you switching powers?", "Yes", "No");
+            bool answer = await App.Current.MainPage.DisplayAlert(Constants.SWITCH_POWER_CHECK_TITLE, Constants.SWITCH_POWER_MESSAGE, "Yes", "No");
 
             if (answer)
             {
@@ -97,7 +99,6 @@ namespace DriveMobile.Models
                 var emptyPost = JsonConvert.SerializeObject(new object());
                 var stringContent = new StringContent(emptyPost, Encoding.UTF8, "application/json");
 
-                App.driver = null;
                 App.loggedIn = false;
                 
                 await App.driveClient.PostAsync(url, stringContent);
