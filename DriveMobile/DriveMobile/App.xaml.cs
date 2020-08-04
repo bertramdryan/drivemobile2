@@ -12,7 +12,7 @@ namespace DriveMobile
     public partial class App : Application
     {
         public static string DatabaseLocation = string.Empty;
-        public static Driver driver = new Driver();
+        //public static Driver driver = new Driver();
         public static bool loggedIn = false;
         public static HttpClient driveClient = new HttpClient();
         public static int numOfStopsRemaining = 0;
@@ -41,16 +41,17 @@ namespace DriveMobile
 
         private void TryAutoLogin()
         {
-            //Preferences.Clear();
-            if (Preferences.ContainsKey("expiration"))
+            Preferences.Clear();
+            if (Preferences.ContainsKey("Expiration"))
             {
-                DateTime expires = Preferences.Get("expiration", DateTime.Now);
+                DateTime expires = Preferences.Get("Expiration", DateTime.Now);
 
                 if (DateTime.Now < expires)
                 {
                     loggedIn = true;
 
-                    string authToken = Preferences.Get("authToken", string.Empty);
+                    string authToken = Preferences.Get("AuthToken", string.Empty);
+
 
                     // Setting authToken to global http client. 
                     if (!string.IsNullOrEmpty(authToken))
@@ -59,7 +60,11 @@ namespace DriveMobile
                 else
                 {
                     Preferences.Clear();
+                    loggedIn = false;
                 }
+            } else
+            {
+                loggedIn = false;
             }
         }
 

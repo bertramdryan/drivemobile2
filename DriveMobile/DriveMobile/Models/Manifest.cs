@@ -8,11 +8,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace DriveMobile.Models
 {
     public class Manifest
     {
+        #region Properties
         public int DriverId { get; set; }
         public object PowerId { get; set; }
         public int DivisionId { get; set; }
@@ -31,13 +33,21 @@ namespace DriveMobile.Models
         [IgnoreDataMember]
         public IList<StopGroup> StopGroups { get; set; }
         public int Id { get; set; }
+        #endregion Properties
 
-
+        #region Public Methods
         public static async Task<List<Manifest>> GetManifests()
         {
+            string userId = Preferences.Get("UserId", string.Empty);
             List<Manifest> manifestList = new List<Manifest>();
 
-            string url = string.Format(Constants.DRIVE_BASE_URL, Constants.MANIFEST + App.driver.UserId);
+            if (string.IsNullOrEmpty(userId))
+            {
+                await App.Current.MainPage.DisplayAlert("Manifest Error", "Something went wrong with getting the manifest, try reloggin in.", "Ok");
+                return manifestList;
+            }
+
+            string url = string.Format(Constants.DRIVE_BASE_URL, Constants.MANIFEST + userId);
             string maxDate = JsonConvert.SerializeObject(new { });
             StringContent stringContent = new StringContent(maxDate, Encoding.UTF8, "application/json");
 
@@ -60,6 +70,9 @@ namespace DriveMobile.Models
 
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
         private static List<StopGroup> CreateStopGroups(Manifest manifest)
         {
             List<StopGroup> stopGroups = new List<StopGroup>();
@@ -120,33 +133,31 @@ namespace DriveMobile.Models
                 // "I am not a smart man, but I know what MVC is." -Sr. Developer Gump
                 // This is not an MVC app, it is just funny. 
 
-                if (stopGroupIterator < manifest.Stops.Count)
+
+                // inner iterator
+                int increment = 1;
+
+                // iterates until their isn't match. 
+                bool canIterate = true;
+
+                // skips a bunch of typing by extracting the stop here. 
+                // hope you understand. Lazy Dev. 
+
+                while (canIterate && increment + stopGroupIterator < manifest.Stops.Count)
                 {
-                    // inner iterator
-                    int increment = 1;
-
-                    // iterates until their isn't match. 
-                    bool canIterate = true;
-
-                    // skips a bunch of typing by extracting the stop here. 
-                    // hope you understand. Lazy Dev. 
                     Stop stop2 = manifest.Stops[stopGroupIterator + increment];
-
-                    while (canIterate && increment + stopGroupIterator < manifest.Stops.Count)
+                    if (MatchLocationInfo(stop, stop2))
                     {
-                        if (MatchLocationInfo(stop, stop2))
-                        {
-                            stopGroup.Stops.Add(stop2);
-                            increment++;
-                        }
-                        else
-                        {
-                            canIterate = false;
-                            stopGroupIterator += increment;
-                        }
+                        stopGroup.Stops.Add(stop2);
+                        increment++;
                     }
-
+                    else
+                    {
+                        canIterate = false;
+                    }
                 }
+                stopGroups.Add(stopGroup);
+                stopGroupIterator += increment;
             }
             return stopGroups;
         }
@@ -170,5 +181,7 @@ namespace DriveMobile.Models
             }
             return false;
         }
+
+        #endregion Private Methods
     }
 }

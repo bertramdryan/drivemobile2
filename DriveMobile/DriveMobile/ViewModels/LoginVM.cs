@@ -1,4 +1,5 @@
-﻿using DriveMobile.Models;
+﻿using DriveMobile.Helpers;
+using DriveMobile.Models;
 using DriveMobile.ViewModels.Commands;
 using System;
 using System.Collections.Generic;
@@ -92,7 +93,7 @@ namespace DriveMobile.ViewModels
             }
             else
             {
-                await App.Current.MainPage.DisplayAlert("Loggin Error", "Something went wrong during the log in process, Please Try again.", "Ok");
+                await App.Current.MainPage.DisplayAlert(Constants.LOGIN_ERROR_TITLE, Constants.LOGIN_ERROR_MESSAGE, "Ok");
                 UserName = "";
                 Password = "";
             }

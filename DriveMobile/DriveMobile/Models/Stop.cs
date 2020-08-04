@@ -20,8 +20,8 @@ namespace DriveMobile.Models
         public DateTime EarliestArrival { get; set; }
         public DateTime LatestArrival { get; set; }
         public int StopTypeId { get; set; }
-        public DateTime ActualArrivalTime { get; set; }
-        public DateTime ActualDepartureTime { get; set; }
+        public DateTime? ActualArrivalTime { get; set; }
+        public DateTime? ActualDepartureTime { get; set; }
         public string LocationName { get; set; }
         public string StreetAddress1 { get; set; }
         public string StreetAddress2 { get; set; }
@@ -43,10 +43,10 @@ namespace DriveMobile.Models
         public string DockNotes { get; set; }
         public string DockPhone { get; set; }
         public string DockEmail { get; set; }
-        public double Pieces { get; set; }
-        public double Count { get; set; }
-        public double Weight { get; set; }
-        public double Volume { get; set; }
+        public double? Pieces { get; set; }
+        public double? Count { get; set; }
+        public double? Weight { get; set; }
+        public double? Volume { get; set; }
         public bool? Stackable { get; set; }
         public IList<OrderNote> OrderNotes { get; set; }
         public IList<ReferenceNumber> ReferenceNumbers { get; set; }
