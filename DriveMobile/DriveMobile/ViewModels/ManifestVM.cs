@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DriveMobile.ViewModels
 {
-    public class MainVM : INotifyPropertyChanged
+    public class ManifestVM : INotifyPropertyChanged
     {
         private ObservableCollection<Manifest> manifests;
 
@@ -22,7 +22,7 @@ namespace DriveMobile.ViewModels
         }
 
 
-        public MainVM()
+        public ManifestVM()
         {
             Manifests = new ObservableCollection<Manifest>();
             GetManifests();

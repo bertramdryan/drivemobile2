@@ -11,15 +11,10 @@ namespace DriveMobile.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Dictionary<string, string> timeZoneConvert = new Dictionary<string, string>();
-
-            timeZoneConvert.Add("US/Eastern", "US Eastern Standard Time");
-            timeZoneConvert.Add("US/Central", "Central Standard Time");
+       
             DateTime dateTime = (DateTime)value;
             string timeZone = Preferences.Get("Timezone", string.Empty);
-            string convertedTz = timeZoneConvert[timeZone];
-            TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById(convertedTz);
-
+            TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
             return TimeZoneInfo.ConvertTimeFromUtc(dateTime, tzInfo);
         }
 

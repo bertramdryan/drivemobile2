@@ -30,8 +30,6 @@ namespace DriveMobile.Models
         public bool NeedsBlocking { get; set; }
         public object TrailerNumber { get; set; }
         public List<Stop> Stops { get; set; }
-        [IgnoreDataMember]
-        public IList<StopGroup> StopGroups { get; set; }
         public int Id { get; set; }
         #endregion Properties
 
@@ -58,11 +56,6 @@ namespace DriveMobile.Models
                 var json = await response.Content.ReadAsStringAsync();
                 manifestList = JsonConvert.DeserializeObject<List<Manifest>>(json);
 
-                foreach (Manifest manifest in manifestList)
-                {
-                    manifest.StopGroups = CreateStopGroups(manifest);
-                }
-
                 return manifestList;
             }
 
@@ -70,10 +63,46 @@ namespace DriveMobile.Models
 
         }
 
+        public static async Task<Manifest> GetManifest()
+        {
+            string userId = Preferences.Get("UserId", string.Empty);
+            Manifest manifest = new Manifest();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                await App.Current.MainPage.DisplayAlert("Manifest Error", "Something went wrong with getting the manifest, try reloggin in.", "Ok");
+                return manifest;
+            }
+
+            string url = string.Format(Constants.DRIVE_BASE_URL, Constants.MANIFEST + userId);
+            string maxDate = JsonConvert.SerializeObject(new { });
+            StringContent stringContent = new StringContent(maxDate, Encoding.UTF8, "application/json");
+
+            var response = await App.driveClient.PostAsync(url, stringContent);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var manifestList = JsonConvert.DeserializeObject<List<Manifest>>(json);
+
+                if (manifestList.Count > 0)
+                {
+                    manifestList.Sort((a, b) => DateTime.Compare(b.EstimatedStartTime, a.EstimatedStartTime));
+                    manifest = manifestList[0];
+                }
+
+                return manifest;
+            }
+
+            return manifest;
+
+        }
+
+
         #endregion Public Methods
 
         #region Private Methods
-        private static List<StopGroup> CreateStopGroups(Manifest manifest)
+        public static List<StopGroup> CreateStopGroups(Manifest manifest)
         {
             List<StopGroup> stopGroups = new List<StopGroup>();
 
