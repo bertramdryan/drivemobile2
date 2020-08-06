@@ -62,6 +62,7 @@ namespace DriveMobile.Models
                 Preferences.Set("FullName", driver.FullName);
                 Preferences.Set("UserId", driver.UserId);
                 Preferences.Set("DriverId", driver.DriverId);
+                Preferences.Set("Timezone", driver.Timezone);
                 Preferences.Set("Expiration", DateTime.Now.AddSeconds(driver.ExpiresIn));
                 //App.driver = driver;
                                

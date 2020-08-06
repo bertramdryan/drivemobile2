@@ -9,7 +9,18 @@ namespace DriveMobile.ViewModels
 {
     public class MainVM : INotifyPropertyChanged
     {
-        ObservableCollection<Manifest> Manifests { get; set; }
+        private ObservableCollection<Manifest> manifests;
+
+        public ObservableCollection<Manifest> Manifests
+        {
+            get { return manifests; }
+            set
+            {
+                manifests = value;
+                OnPropertyChanged("Manifests");
+            }
+        }
+
 
         public MainVM()
         {
@@ -20,7 +31,7 @@ namespace DriveMobile.ViewModels
         private async void GetManifests()
         {
             var tempManifests = await Manifest.GetManifests();
-            foreach(var manifest in tempManifests)
+            foreach (var manifest in tempManifests)
             {
                 Manifests.Add(manifest);
             }

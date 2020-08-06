@@ -41,7 +41,7 @@ namespace DriveMobile
 
         private void TryAutoLogin()
         {
-            Preferences.Clear();
+            // Preferences.Clear();
             if (Preferences.ContainsKey("Expiration"))
             {
                 DateTime expires = Preferences.Get("Expiration", DateTime.Now);
