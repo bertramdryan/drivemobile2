@@ -6,10 +6,29 @@
              mc:Ignorable="d"
              x:Class="DriveMobile.AssignmentPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <ScrollView Grid.Column="0">
+                <ListView ItemsSource="{Binding StopGroups}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding Location.LocationName}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollView>
+            <FlexLayout Grid.Column="1"
+                        Direction="Column"
+                        Wrap="NoWrap">
+                <Button Text="Layover"/>
+                <Button Text="Fuel" />
+                <Button Text="Break" />
+                <Button Text="Breakdown"/>
+
+            </FlexLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

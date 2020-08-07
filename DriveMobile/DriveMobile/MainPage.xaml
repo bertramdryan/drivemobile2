@@ -6,9 +6,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="DriveMobile.MainPage"
-             NavigationPage.HasNavigationBar="false">
+             NavigationPage.HasNavigationBar="false"
+             >
 
     <local:AssignmentPage Title="Current Load"/>
-    
-    
+    <local:ManifestPage Title="Manifests" />
+
 </TabbedPage>

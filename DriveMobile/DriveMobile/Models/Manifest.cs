@@ -147,7 +147,7 @@ namespace DriveMobile.Models
                     StopType = stop.StopTypeName,
                     StopTypeId = stop.StopTypeId,
                     DispatchLoadId = stop.DispatchLoadId,
-                    DockInto = tempDockInfo,
+                    DockInfo = tempDockInfo,
                     TrailerInfo = tempTrailerInfo,
                     EstimatedStartTime = stop.EarliestArrival,
                     LatestStartTime = stop.LatestArrival,
