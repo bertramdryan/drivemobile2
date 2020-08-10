@@ -18,14 +18,14 @@ namespace DriveMobile.Models
             }
         }
 
-        private string stopType;
-        public string StopType
+        private string stopTypeName;
+        public string StopTypeName
         {
-            get { return stopType; }
+            get { return stopTypeName; }
             set
             {
-                stopType = value;
-                OnPropertyChanged("StopType");
+                stopTypeName = value;
+                OnPropertyChanged("StopTypeName");
             }
         }
 
@@ -34,10 +34,10 @@ namespace DriveMobile.Models
 
         public int StopTypeId
         {
-            get { return StopTypeId; }
+            get { return stopTypeId; }
             set
             {
-                StopTypeId = value;
+                stopTypeId = value;
                 OnPropertyChanged("StopTypeId");
             }
         }
@@ -75,7 +75,12 @@ namespace DriveMobile.Models
         }
 
         private TrailerInfo trailerInfo;
-        public TrailerInfo TrailerInfo { get; set; }
+        public TrailerInfo TrailerInfo
+        {
+            get { return trailerInfo; }
+            set { trailerInfo = value; }
+        }
+
         public DateTime EstimatedStartTime { get; set; }
         public DateTime LatestStartTime { get; set; }
         public bool Completed { get; set; }

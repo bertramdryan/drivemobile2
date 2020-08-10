@@ -144,7 +144,7 @@ namespace DriveMobile.Models
                 StopGroup stopGroup = new StopGroup()
                 {
                     Location = tempLocation,
-                    StopType = stop.StopTypeName,
+                    StopTypeName = stop.StopTypeName,
                     StopTypeId = stop.StopTypeId,
                     DispatchLoadId = stop.DispatchLoadId,
                     DockInfo = tempDockInfo,

@@ -3,19 +3,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:DriveMobile.Converters"
              mc:Ignorable="d"
              x:Class="DriveMobile.AssignmentPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:StopTypeColorConverter x:Key="colorOfStopType" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid>
+        <Grid Padding="0" Margin="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="8*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <ScrollView Grid.Column="0">
-                <ListView ItemsSource="{Binding StopGroups}">
+                <ListView ItemsSource="{Binding StopGroups}"
+                          VerticalOptions="FillAndExpand" 
+                          HorizontalOptions="FillAndExpand"
+                          HasUnevenRows="True">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextCell Text="{Binding Location.LocationName}" />
+                            <ViewCell>
+                                <Frame HasShadow="True" Padding="0" Margin="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Row="0" Grid.Column="0" 
+                                               Grid.RowSpan="4" Rotation="-90" 
+                                               Text="{Binding StopTypeName}"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               
+                                               TextColor="White"
+                                               FontSize="Medium"
+                                               FontAttributes="Bold"
+                                               BackgroundColor="{Binding StopTypeId, Converter={StaticResource colorOfStopType}}"
+                                             />
+                                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding Location.LocationName}" />
+                                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding Location.Address1}" />
+                                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding Location.Address2}" />
+                                    </Grid>
+                                </Frame>
+
+                            </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
