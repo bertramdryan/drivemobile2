@@ -21,7 +21,7 @@ namespace DriveMobile.Models
         private string stopTypeName;
         public string StopTypeName
         {
-            get { return stopTypeName; }
+            get { return stopTypeName.Trim(); }
             set
             {
                 stopTypeName = value;
