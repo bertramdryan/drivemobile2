@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace DriveMobile.ViewModels.Commands
 {
-    class LayoverCommand : ICommand
+    public class LayoverCommand : ICommand
     {
 
 

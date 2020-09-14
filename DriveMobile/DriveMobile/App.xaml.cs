@@ -55,14 +55,17 @@ namespace DriveMobile
 
                     // Setting authToken to global http client. 
                     if (!string.IsNullOrEmpty(authToken))
+                    {
                         driveClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                    }
                 }
                 else
                 {
                     Preferences.Clear();
                     loggedIn = false;
                 }
-            } else
+            }
+            else
             {
                 loggedIn = false;
             }

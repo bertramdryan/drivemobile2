@@ -1,5 +1,6 @@
 ﻿using DriveMobile.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -319,7 +320,7 @@ namespace DriveMobile.Models
             {
                 conn.CreateTable<PaySheetEntry>();
 
-                conn.Table<PaySheetEntry>().Where(p => p.SentToServer == false).ToList();
+                psToSend = conn.Table<PaySheetEntry>().Where(p => p.SentToServer == false).ToList();
             }
 
             return psToSend;
@@ -429,7 +430,12 @@ namespace DriveMobile.Models
             if (paysheetEntries.Count > 0)
             {
                 string url = string.Format(Constants.DRIVE_BASE_URL, Constants.SAVE_MULTIPLE_PAYSHEET_ENTRIES);
-                var paysheetsInJson = JsonConvert.SerializeObject(paysheetEntries);
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+
+                var paysheetsInJson = JsonConvert.SerializeObject(paysheetEntries, jsonSerializerSettings);
                 var stringContent = new StringContent(paysheetsInJson, Encoding.UTF8, "application/json");
 
                 var result = await App.driveClient.PostAsync(url, stringContent);

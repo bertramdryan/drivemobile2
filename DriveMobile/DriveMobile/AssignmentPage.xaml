@@ -18,49 +18,93 @@
                 <ColumnDefinition Width="8*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <ScrollView Grid.Column="0">
+            <ScrollView Grid.Column="0" Margin="5, 10, 5, 25">
                 <StackLayout x:Name="StopStack" BindableLayout.ItemsSource="{Binding StopGroups}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
-                            <Frame HasShadow="True" Padding="0"
-                                    BackgroundColor="{Binding StopTypeId, Converter={StaticResource colorOfStopType}}"
-                                   >
+                            <Frame HasShadow="True" Padding="0" Margin="0, 5, 0, 5">
                                 <Grid ColumnSpacing="0"
                                       Padding="0,0,0,0"
+                                      x:Name="StopGroup"
                                      >
                                     <Grid.RowDefinitions>
-                                       
-                                        <RowDefinition Height="2.25*"/>
-                                        <RowDefinition Height="2.25*"/>
-                                        <RowDefinition Height="2.25*"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width=".4*"/>
-                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="4*"/>
                                         <ColumnDefinition Width="3*"/>
                                         <ColumnDefinition Width="3*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Text="{Binding StopTypeName}"
-                                            Grid.ColumnSpan="4"
+                                    <Frame Grid.ColumnSpan="4"
+                                           BackgroundColor="{Binding StopTypeId, Converter={StaticResource colorOfStopType}}">
+                                        <Label Text="{Binding StopTypeName}"
+                                            Margin="0, -10, 0, -10"
+                                            Padding="0"
                                             TextColor="White"
-                                            FontSize="Body"
+                                            FontSize="Large"
                                             FontAttributes="Bold"
                                             LineBreakMode="NoWrap"
                                             VerticalOptions="Center"
-                                            HorizontalOptions="Center"/>
-                                    <BoxView Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" BackgroundColor="White" Opacity=".7" Margin="5" />
-                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Location.LocationName}" FontSize="Large" Margin="0" Padding="0"/>
-                                    <StackLayout Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Padding="0" Margin="0, -10, 0, 0">
-                                        <Label Text="{Binding Location.Address1}" Margin="0" Padding="0"/>
-                                        <Label Text="  " Margin="0" Padding="0"/>
-                                        <Label Text="{Binding Location.Address2}" Margin="0" Padding="0"/>
+                                            HorizontalOptions="Center"
+                                          />
+                                    </Frame>
+                                    <StackLayout Grid.Row="1">
+                                        <Label  Text="{Binding Location.LocationName}" Padding="0" 
+                                                Margin="10, 0, 0, -6" FontSize="Medium"/>
+                                        <StackLayout Orientation="Horizontal" Grid.Row="2" Grid.Column="1" 
+                                                     Padding="0" Margin="10, -6, 0, -6">
+                                            <Label Text="{Binding Location.Address1}" FontSize="Medium"/>
+                                            <Label Text="  "/>
+                                            <Label Text="{Binding Location.Address2}" FontSize="Medium"/>
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal" Padding="0" Margin="10, -6, 0, 0">
+                                            <Label Text="{Binding Location.City}" FontSize="Medium"/>
+                                            <Label Text=","/>
+                                            <Label Text="{Binding Location.State}" FontSize="Medium"/>
+                                            <Label Text=" " />
+                                            <Label Text="{Binding Location.Zip}" FontSize="Medium"/>
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal" Padding="0" Margin="10, -6, 0, 0">
+                                            <Label Text="Number of Orders: "/>
+                                            <Label Text="{Binding Stops.Count}"/>
+                                        </StackLayout>
                                     </StackLayout>
-                                    <StackLayout Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Padding="0" Margin="0, -27, 0, 0">
-                                        <Label Text="{Binding Location.City}" Margin="0"/>
-                                        <Label Text="," Margin="0"/>
-                                        <Label Text="{Binding Location.State}" Margin="0"/>
-                                        <Label Text=" " Margin="0"/>
-                                        <Label Text="{Binding Location.Zip}" Margin="0"/>
+                                    
+                                   
+                                    <StackLayout Grid.Column="1" Grid.Row="1">
+                                        <StackLayout Orientation="Horizontal">
+                                            <StackLayout>
+                                                <Label Text="Start Time"/>
+                                                <Label Text="{Binding EstimatedStartTime}"/>
+                                            </StackLayout>
+                                            <BoxView VerticalOptions="Center"
+                                             HorizontalOptions="Center"
+                                             WidthRequest="2"
+                                             HeightRequest="80"
+                                             Color="Gray"
+                                             Opacity=".5"></BoxView>
+                                            <StackLayout>
+                                                <Label Text="Latest Time"/>
+                                                <Label Text="{Binding LatestStartTime}"/>
+                                            </StackLayout>
+                                        </StackLayout>
+                                    </StackLayout>
+
+                                    <StackLayout Grid.Column="2" Grid.Row="1">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Button x:Name="ArriveButton"
+                                                    Text="Arrive"
+                                                    BindingContext="{Binding Source={x:Reference StopStack}, Path=BindingContext}"
+                                                    Command="{Binding ArriveCmd}"
+                                                    CommandParameter="{Binding Source={x:Reference StopGroup}, Path=BindingContext}" />
+                                            <Button x:Name="DepartButton"
+                                                    Text="Depart"
+                                                    BindingContext="{Binding Source={x:Reference StopStack}, Path=BindingContext}"
+                                                    Command="{Binding DepartCmd}"
+                                                    CommandParameter="{Binding Source={x:Reference StopGroup}, Path=BindingContext}"/>
+                                        </StackLayout>
                                     </StackLayout>
                                 </Grid>
                             </Frame>

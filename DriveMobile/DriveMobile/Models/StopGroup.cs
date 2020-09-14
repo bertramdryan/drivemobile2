@@ -54,9 +54,9 @@ namespace DriveMobile.Models
             }
         }
 
-        private IList<Stop> stops;
+        private List<Stop> stops;
 
-        public IList<Stop> Stops
+        public List<Stop> Stops
         {
             get { return stops; }
             set
