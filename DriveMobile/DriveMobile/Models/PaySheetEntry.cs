@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,21 +40,16 @@ namespace DriveMobile.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public long PaySheetId { get; set; }
-        public PaySheetEntryTypeEnums EntryType { get; set; }
+        public int EntryType { get; set; }
         public int? TrailerId { get; set; }
         public string TrailerName { get; set; }
-        public int? StopTypeId { get; set; }
-        public string StopTypeName { get; set; }
         public int? PowerId { get; set; }
-        public string PowerName { get; set; }
         public DateTime? EntryDate { get; set; }
         public DateTime EntryCreated { get; set; }
         public int? DispatchLoadId { get; set; }
         public int? DispatchLoadStopId { get; set; }
         public int? OrderStopId { get; set; }
-        public OrderStop OrderStop { get; set; }
-        public string OtherStopType { get; set; }
-        public int? OtherStopTypeId { get; set; }
+        public int? OtherStopId { get; set; }
         public bool IsEquipmentMove { get; set; }
         public string OtherStopName { get; set; }
         public string OtherStopAddress1 { get; set; }
@@ -69,16 +63,13 @@ namespace DriveMobile.Models
         public double? Longitude { get; set; }
         public string EstimatedZipCode { get; set; }
         public double? PiecesActual { get; set; }
-        public double? CountActual { get; set; }
         public double? Damaged { get; set; }
         public double? Pieces { get; set; }
         public double? Count { get; set; }
-        public string AuditedByName { get; set; }
-        public string ConfirmedByName { get; set; }
-        public string Notes { get; set; }
         public double? Mileage { get; set; }
         public bool IsHourly { get; set; }
         public bool ForAllocatedOrder { get; set; }
+        [IgnoreDataMember]
         public bool SentToServer { get; set; }
         #endregion PaySheetEntry Properties
 
@@ -381,7 +372,7 @@ namespace DriveMobile.Models
                     paySheetEntry = new PaySheetEntry()
                     {
                         PaySheetId = paysheetId,
-                        EntryType = entryType,
+                        EntryType = (int)entryType,
                         EntryDate = currentTime,
                         EntryCreated = currentTime,
                         DriverId = driverId,
@@ -411,9 +402,41 @@ namespace DriveMobile.Models
             DateTime currentTime = DateTime.UtcNow;
             bool arrival = entryType == PaySheetEntryTypeEnums.Arrive;
 
+            int driverId = 0;
+
+            if (Preferences.ContainsKey("DriverId"))
+                driverId = Preferences.Get("DriverId", 0);
+
+            int paysheetId = 0;
+            int? powerId = null;
+            int? trailerId = null;
+
+            CurrentLocation currentLocation = new CurrentLocation();
+
+            if (Preferences.ContainsKey("PaysheetId"))
+                paysheetId = Preferences.Get("PaysheetId", 0);
+
+
+            if (Preferences.ContainsKey("PowerId"))
+                powerId = Preferences.Get("PowerId", 0);
+
+
+            if (Preferences.ContainsKey("TrailerId"))
+                trailerId = Preferences.Get("TrailerId", 0);
+
             PaySheetEntry paySheetEntry = new PaySheetEntry()
             {
-
+                PaySheetId = paysheetId,
+                EntryType = (int)entryType,
+                EntryDate = currentTime,
+                EntryCreated = currentTime,
+                DriverId = driverId,
+                Mileage = currentLocation?.Odometer,
+                Latitude = currentLocation?.Lat,
+                Longitude = currentLocation?.Lon,
+                PowerId = powerId != 0 ? powerId : null,
+                TrailerId = trailerId
+                
             };
 
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Xamarin.Essentials;
 
 namespace DriveMobile.ViewModels
 {
@@ -12,6 +13,7 @@ namespace DriveMobile.ViewModels
     {
         public ArriveCommand ArriveCmd { get; set; }
         public DepartCommand DepartCmd { get; set; }
+        public SetTrailerIdCommand SetTrailerCmd { get; set; }
         //public LayoverCommand LayoverCmd { get; set; }
         //public FuelCommand FuelCmd { get; set; }
         //public BreakCommand BreakCmd { get; set; }
@@ -42,10 +44,24 @@ namespace DriveMobile.ViewModels
             }
         }
 
+        private string? trailerId;
+
+        public string? TrailerId
+        {
+            get { return trailerId; }
+            set
+            {
+                trailerId = value;
+                OnPropertyChanged("TrailerId");
+            }
+        }
+
+
         public AssignmentVM()
         {
             ArriveCmd = new ArriveCommand(this);
             DepartCmd = new DepartCommand(this);
+            SetTrailerCmd = new SetTrailerIdCommand(this);
             //LayoverCmd = new LayoverCommand();
             //FuelCmd = new FuelCommand();
             //BreakCmd = new BreakCommand();
@@ -79,6 +95,19 @@ namespace DriveMobile.ViewModels
         public async void Depart(StopGroup stopGroup)
         {
             await PaySheetEntry.Depart(stopGroup.Stops);
+            if (!stopGroup.DepartsWithTrailer && Preferences.ContainsKey("TrailerId"))
+            {
+                Preferences.Remove("TrailerId");
+            }
+        }
+
+        public void SetTrailerId(string trailerId)
+        {
+            int trailerIdInt;
+ 
+            if (int.TryParse(trailerId, out trailerIdInt))
+                Preferences.Set("TrailerId", trailerId);
+                TrailerId = trailerId;
         }
         #endregion Public Command Methods
     }

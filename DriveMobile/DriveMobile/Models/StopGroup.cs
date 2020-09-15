@@ -81,6 +81,25 @@ namespace DriveMobile.Models
             set { trailerInfo = value; }
         }
 
+        private bool departsWithTrailer;
+
+        public bool DepartsWithTrailer
+        {
+            get { return departsWithTrailer; }
+            set { departsWithTrailer = value; }
+        }
+
+
+        private bool arrivesWithTrailer;
+
+        public bool ArrivesWithTrailer
+        {
+            get { return arrivesWithTrailer; }
+            set { arrivesWithTrailer = value; }
+        }
+
+
+
         public DateTime EstimatedStartTime { get; set; }
         public DateTime LatestStartTime { get; set; }
         public bool Completed { get; set; }

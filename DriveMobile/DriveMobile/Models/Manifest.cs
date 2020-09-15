@@ -149,10 +149,14 @@ namespace DriveMobile.Models
                     DispatchLoadId = stop.DispatchLoadId,
                     DockInfo = tempDockInfo,
                     TrailerInfo = tempTrailerInfo,
+                    DepartsWithTrailer = stop.HasTrailerOnDeparture,
+                    ArrivesWithTrailer = stop.HasTrailerOnArrival,
                     EstimatedStartTime = stop.EarliestArrival,
                     LatestStartTime = stop.LatestArrival,
                     Stops = new List<Stop>()
                 };
+
+                
 
                 // Adding currently compared stop.
                 stopGroup.Stops.Add(stop);

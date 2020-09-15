@@ -10,6 +10,9 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:StopTypeColorConverter x:Key="colorOfStopType" />
+            <converters:TrailerInfoVisibilityConverter x:Key="trailerInfoVisibility" />
+            <converters:HasTrailerIdConverter x:Key="hasTrailerId" />
+            <converters:GetTrailerIdConverter x:Key="getTrailerId" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
@@ -29,6 +32,7 @@
                                      >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
+                                        <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
@@ -104,6 +108,26 @@
                                                     BindingContext="{Binding Source={x:Reference StopStack}, Path=BindingContext}"
                                                     Command="{Binding DepartCmd}"
                                                     CommandParameter="{Binding Source={x:Reference StopGroup}, Path=BindingContext}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+
+                                    <StackLayout Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3"
+                                                 Orientation="Horizontal" 
+                                                 IsVisible="{Binding Source={x:Reference StopGroup}, Path=BindingContext, Converter={StaticResource trailerInfoVisibility}}">
+                                        
+                                        <StackLayout IsVisible="{Binding TrailerId, Converter={StaticResource hasTrailerId}}"
+                                                     Orientation="Horizontal">
+                                            <Label Text="Trailer#: " />
+                                            <Label Text="{Binding TrailerId}" />
+                                        </StackLayout>
+                                        <StackLayout IsVisible="{Binding TrailerId, Converter={StaticResource getTrailerId}}"
+                                                     Orientation="Horizontal">
+                                            <Label Text="Trailer#: " />
+                                            <Entry Placeholder="Enter Trailer Number." Text="{Binding TrailerId, Mode=TwoWay}"/>
+                                            <Button Text="Set Trailer" 
+                                                    Command="{Binding SetTrailerCmd}"
+                                                    CommandParameter="{Binding TrailerId}"
+                                                    />
                                         </StackLayout>
                                     </StackLayout>
                                 </Grid>

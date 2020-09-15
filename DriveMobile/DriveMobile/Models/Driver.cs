@@ -76,7 +76,7 @@ namespace DriveMobile.Models
                     using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
                     {
                         conn.CreateTable<PaySheetEntry>();
-                        var punchIn = conn.Table<PaySheetEntry>().ToList().Where(p => p.EntryType == PaySheetEntryTypeEnums.PunchIn).ToList();
+                        var punchIn = conn.Table<PaySheetEntry>().ToList().Where(p => p.EntryType == (int)PaySheetEntryTypeEnums.PunchIn).ToList();
                         if (punchIn.Count == 0)
                         {
                             await PaySheetEntry.PunchIn();

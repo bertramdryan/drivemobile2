@@ -53,6 +53,8 @@ namespace DriveMobile
                     string authToken = Preferences.Get("AuthToken", string.Empty);
 
 
+
+
                     // Setting authToken to global http client. 
                     if (!string.IsNullOrEmpty(authToken))
                     {
